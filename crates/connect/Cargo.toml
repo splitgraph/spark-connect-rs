@@ -40,6 +40,7 @@ tonic = { workspace = true, default-features = false, optional = true }
 tower = { workspace = true }
 tokio = { workspace = true, optional = true }
 
+futures = { workspace = true }
 futures-util = { workspace = true }
 thiserror = { workspace = true }
 

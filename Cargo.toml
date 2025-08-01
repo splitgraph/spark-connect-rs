@@ -37,6 +37,7 @@ tonic = { version ="0.12", default-features = false }
 tokio = { version = "1", default-features = false, features = ["macros"] }
 tower = { version = "0" }
 
+futures = { version = "0.3" }
 futures-util = { version = "0.3" }
 thiserror = { version = "2.0" }
 
