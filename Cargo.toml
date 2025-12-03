@@ -42,8 +42,8 @@ futures = { version = "0.3" }
 futures-util = { version = "0.3" }
 thiserror = { version = "2.0" }
 
-arrow = { version = "56", features = ["prettyprint"] }
-arrow-ipc = { version = "56" }
+arrow = { version = "57", features = ["prettyprint"] }
+arrow-ipc = { version = "57" }
 
 serde_json = { version = "1" }
 
