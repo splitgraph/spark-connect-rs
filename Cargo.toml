@@ -32,7 +32,8 @@ repository = "https://github.com/sjrusso8/spark-connect-rs"
 rust-version = "1.90"
 
 [workspace.dependencies]
-tonic = { version ="*", default-features = false }
+tonic = { version ="0.14" }
+tonic-prost = { version = "0.14" }
 
 tokio = { version = "1", default-features = false, features = ["macros"] }
 tower = { version = "0" }
