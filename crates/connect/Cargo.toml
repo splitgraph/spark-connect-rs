@@ -82,7 +82,7 @@ default = [
   "tonic/transport",
 ]
 
-tls = ["tonic/transport", "tonic/tls-webpki-roots"]
+tls = ["tonic/transport", "tonic/tls-webpki-roots", "tonic/tls-ring"]
 
 datafusion = [
   "dep:datafusion"

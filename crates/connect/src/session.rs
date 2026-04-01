@@ -110,9 +110,15 @@ impl SparkSessionBuilder {
     }
 
     async fn create_client(&self) -> Result<SparkSession, SparkError> {
-        let channel = Channel::from_shared(self.channel_builder.endpoint())?
-            .connect()
-            .await?;
+        let mut endpoint = Channel::from_shared(self.channel_builder.endpoint())?;
+
+        #[cfg(feature = "tls")]
+        if self.channel_builder.use_ssl {
+            endpoint = endpoint
+                .tls_config(tonic::transport::ClientTlsConfig::new().with_enabled_roots())?;
+        }
+
+        let channel = endpoint.connect().await?;
 
         let channel = ServiceBuilder::new()
             .layer(HeadersLayer::new(
