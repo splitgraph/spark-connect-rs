@@ -41,7 +41,7 @@ pub struct ChannelBuilder {
     pub(super) token: Option<String>,
     pub(super) user_id: Option<String>,
     pub(super) user_agent: Option<String>,
-    pub(super) use_ssl: bool,
+    pub(crate) use_ssl: bool,
     pub(super) headers: Option<HashMap<String, String>>,
 }
 
@@ -62,11 +62,7 @@ impl ChannelBuilder {
     }
 
     pub(crate) fn endpoint(&self) -> String {
-        let scheme = if cfg!(feature = "tls") {
-            "https"
-        } else {
-            "http"
-        };
+        let scheme = if self.use_ssl { "https" } else { "http" };
 
         format!("{}://{}:{}", scheme, self.host, self.port)
     }

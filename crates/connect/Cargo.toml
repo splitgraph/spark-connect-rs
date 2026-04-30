@@ -36,6 +36,7 @@ include = [
 
 [dependencies]
 tonic = { workspace = true, default-features = false, optional = true }
+tonic-prost = { workspace = true }
 
 tower = { workspace = true }
 tokio = { workspace = true, optional = true }
@@ -69,7 +70,7 @@ futures = "0.3"
 tokio = { workspace = true, features = ["rt-multi-thread"] }
 
 [build-dependencies]
-tonic-build = "0.12"
+tonic-prost-build = "*"
 
 [lib]
 doctest = false
@@ -78,14 +79,10 @@ doctest = false
 default = [
   "tokio",
   "tonic/codegen",
-  "tonic/prost",
   "tonic/transport",
 ]
 
-tls = [
-  "tonic/tls",
-  "tonic/tls-roots"
-]
+tls = ["tonic/transport", "tonic/tls-webpki-roots", "tonic/tls-ring"]
 
 datafusion = [
   "dep:datafusion"
