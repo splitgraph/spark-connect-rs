@@ -110,6 +110,7 @@ impl SparkSessionBuilder {
     }
 
     async fn create_client(&self) -> Result<SparkSession, SparkError> {
+        #[allow(unused_mut)]
         let mut endpoint = Channel::from_shared(self.channel_builder.endpoint())?;
 
         #[cfg(feature = "tls")]
