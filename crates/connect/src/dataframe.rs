@@ -206,6 +206,14 @@ impl DataFrame {
         self.spark_session.client().to_arrow(plan).await
     }
 
+    /// Returns a raw stream of `[ExecutePlanResponse]`
+    pub async fn into_raw_stream(
+        self,
+    ) -> Result<tonic::Streaming<spark::ExecutePlanResponse>, SparkError> {
+        let plan = self.plan.plan_root();
+        Ok(self.spark_session.client().to_raw_stream(plan).await?)
+    }
+
     /// Retrieves the names of all columns in the [DataFrame] as a `Vec<String>`.
     /// The order of the column names in the list reflects their order in the [DataFrame].
     pub async fn columns(self) -> Result<Vec<String>, SparkError> {

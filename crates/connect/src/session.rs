@@ -47,6 +47,7 @@ use tonic::transport::Channel;
 pub struct SparkSessionBuilder {
     pub channel_builder: ChannelBuilder,
     configs: HashMap<String, String>,
+    use_reattachable_execute: bool,
 }
 
 /// Default connects a Spark cluster running at `sc://127.0.0.1:15002/`
@@ -57,6 +58,7 @@ impl Default for SparkSessionBuilder {
         Self {
             channel_builder,
             configs: HashMap::new(),
+            use_reattachable_execute: true,
         }
     }
 }
@@ -68,6 +70,7 @@ impl SparkSessionBuilder {
         Self {
             channel_builder,
             configs: HashMap::new(),
+            use_reattachable_execute: true,
         }
     }
 
@@ -76,6 +79,7 @@ impl SparkSessionBuilder {
         Self {
             channel_builder: config.into(),
             configs: HashMap::new(),
+            use_reattachable_execute: true,
         }
     }
 
@@ -89,6 +93,12 @@ impl SparkSessionBuilder {
     /// Sets a config option.
     pub fn config(mut self, key: &str, value: &str) -> Self {
         self.configs.insert(key.into(), value.into());
+        self
+    }
+
+    /// Sets whether or not to use reattachable execute
+    pub fn use_reattachable_execute(mut self, use_reattachable_execute: bool) -> Self {
+        self.use_reattachable_execute = use_reattachable_execute;
         self
     }
 
@@ -112,14 +122,15 @@ impl SparkSessionBuilder {
 
         let client = SparkConnectServiceClient::new(channel);
 
-        let spark_connnect_client =
+        let mut spark_connect_client =
             SparkConnectClient::new(Arc::new(RwLock::new(client)), self.channel_builder.clone());
+        spark_connect_client.use_reattachable_execute = self.use_reattachable_execute;
 
-        let mut rt_config = RunTimeConfig::new(&spark_connnect_client);
+        let mut rt_config = RunTimeConfig::new(&spark_connect_client);
 
         rt_config.set_configs(&self.configs).await?;
 
-        Ok(SparkSession::new(spark_connnect_client))
+        Ok(SparkSession::new(spark_connect_client))
     }
 
     /// Attempt to connect to a remote Spark Session

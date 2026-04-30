@@ -177,18 +177,25 @@ where
         }
     }
 
-    pub async fn execute_and_fetch(
+    async fn execute_and_raw_stream(
         &mut self,
         req: spark::ExecutePlanRequest,
-    ) -> Result<(), SparkError> {
+    ) -> Result<tonic::codec::Streaming<spark::ExecutePlanResponse>, tonic::Status> {
         let mut client = self.stub.write().await;
 
-        let mut stream = client.execute_plan(req).await?.into_inner();
+        let stream = client.execute_plan(req).await?.into_inner();
         drop(client);
 
         // clear out any prior responses
         self.handler = ResponseHandler::default();
+        Ok(stream)
+    }
 
+    pub async fn execute_and_fetch(
+        &mut self,
+        req: spark::ExecutePlanRequest,
+    ) -> Result<(), SparkError> {
+        let mut stream = self.execute_and_raw_stream(req).await?;
         self.process_stream(&mut stream).await?;
 
         if self.use_reattachable_execute && self.handler.result_complete {
@@ -552,6 +559,18 @@ where
             &self.handler.batches[0].schema(),
             &self.handler.batches,
         )?)
+    }
+
+    #[allow(clippy::wrong_self_convention)]
+    pub async fn to_raw_stream(
+        &mut self,
+        plan: spark::Plan,
+    ) -> Result<tonic::Streaming<spark::ExecutePlanResponse>, SparkError> {
+        let mut req = self.execute_plan_request_with_metadata();
+
+        req.plan = Some(plan);
+
+        Ok(self.execute_and_raw_stream(req).await?)
     }
 
     #[allow(clippy::wrong_self_convention)]

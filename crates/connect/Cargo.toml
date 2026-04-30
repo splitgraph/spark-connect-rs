@@ -40,10 +40,9 @@ tonic = { workspace = true, default-features = false, optional = true }
 tower = { workspace = true }
 tokio = { workspace = true, optional = true }
 
+futures = { workspace = true }
 futures-util = { workspace = true }
 thiserror = { workspace = true }
-
-http-body = { workspace = true }
 
 arrow = { workspace = true }
 arrow-ipc = { workspace = true }
@@ -70,7 +69,7 @@ futures = "0.3"
 tokio = { workspace = true, features = ["rt-multi-thread"] }
 
 [build-dependencies]
-tonic-build = "0.11"
+tonic-build = "0.12"
 
 [lib]
 doctest = false
